@@ -10,7 +10,7 @@ BleMouse mouse;
 
 // Timing constants
 const int SWING_HOLD_MS = 125;
-const unsigned long HOLD_COUNTDOWN_TIMER = 500; // If no swing after 500ms, release
+const unsigned long HOLD_COUNTDOWN_TIMER = 350; // If no swing after 500ms, release
 
 // Program global variables
 int swing_prev = 0;   // 0 = no swing, 1 = left swing, 2 = right swing
