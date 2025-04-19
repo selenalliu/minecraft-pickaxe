@@ -8,10 +8,14 @@ BleMouse mouse;
 #define BUTTON_R  21  // right button
 #define SWING     5   // FOR TESTING: pickaxe is swung
 
-const int SWING_HOLD_MS = 100;
+// Timing constants
+const int SWING_HOLD_MS = 125;
 const unsigned long HOLD_COUNTDOWN_TIMER = 500; // If no swing after 500ms, release
+
+// Program global variables
 int swing_prev = 0;   // 0 = no swing, 1 = left swing, 2 = right swing
 
+// Inactivity countdown for release
 void startCountdown();
 int checkCountdown();
 void refreshCountdown();
@@ -36,7 +40,6 @@ void loop() {
     delay(100);
     return;
   }
-
 
   unsigned long startTime;
 
@@ -110,22 +113,6 @@ void loop() {
     }
 
   }
-
-/* // WE WANT HOLD/RELEASE TO WORK WHEN FLUTTERING SWING, NOT WHEN HOLDING IT
-  // If previous swing was high and current swing is low, release holds
-  if (!swing_now && swing_prev) {
-    if (swing_prev == 1) {
-      Serial.println("Left release");
-      mouse.release(MOUSE_LEFT);
-      swing_now = 0;
-      swing_prev = swing_now;
-    } else if (swing_prev == 2) {
-      Serial.println("Right release");
-      mouse.release(MOUSE_RIGHT);
-      swing_now = 0;
-      swing_prev = swing_now;
-    }
-  } */
 
   // If previous swing was high and current swing is also high, do nothing
   
