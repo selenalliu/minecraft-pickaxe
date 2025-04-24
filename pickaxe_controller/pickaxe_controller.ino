@@ -1,3 +1,4 @@
+#include <Wire.h>
 #include <I2Cdev.h>
 #include <MPU6050.h>
 #include <BleMouse.h>
@@ -16,7 +17,7 @@ const int SWING_HOLD_MS = 125; // Button debounce
 const unsigned long HOLD_COUNTDOWN_TIMER = 350; // If no swing after 500ms, release
 
 // Sensor constants
-const int AX_THRESHOLD = 1000; // min acceleration value to trigger the button
+const int AX_THRESHOLD = 3000; // min acceleration value to trigger the button
 
 /* ======================= Global variables ======================= */
 int16_t ax, ay, az, gx, gy, gz; // collect the accelerometer/gyroscope data
@@ -38,6 +39,7 @@ bool checkForSwing();
 
 void setup() {
   Serial.begin(115200);
+  Wire.begin();
 
   // Configure GPIOs (Button press connects to ground)
   pinMode(BUTTON_L, INPUT_PULLUP);
@@ -46,10 +48,13 @@ void setup() {
 
   // Initialize MPU sensor
   mpu.initialize();
+  Serial.println("MPU6050 initializing...");
   if (!mpu.testConnection()) {
+    Serial.println("MPU6050 connection failed");
     while (1);
   }
   mouse.begin();
+  Serial.println("Mouse started");
 }
 
 void loop() {
@@ -76,6 +81,7 @@ void loop() {
       // Each swing refreshes countdown. When countdown expires, release
       while (!checkCountdown(HOLD_COUNTDOWN_TIMER)) {
         if (checkForSwing()) {
+          Serial.println("Left hold");
           refreshCountdown(HOLD_COUNTDOWN_TIMER);
         }
         delay(25);
@@ -93,6 +99,7 @@ void loop() {
       // Each swing refreshes countdown. When countdown expires, release
       while (!checkCountdown(HOLD_COUNTDOWN_TIMER)) {
         if (checkForSwing()) {
+          Serial.println("Right hold");
           refreshCountdown(HOLD_COUNTDOWN_TIMER);
         }
         delay(25);
@@ -147,9 +154,10 @@ bool checkForSwing() {
   delta_ax = (old_ax - ax);
   old_ax = ax;
 
-  if (abs(delta_ax) > AX_THRESHOLD) { // swing detected
+  if (delta_ax > AX_THRESHOLD) { // swing detected
+    Serial.print("Swing detected!!!!!!!!!!!!");
     return true;
   }
-
+  Serial.print("No swing");
   return false;
 }
