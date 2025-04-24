@@ -136,7 +136,7 @@ void loop() {
       Serial.println("No pan");
     }
   }
-  delay(100); // small debouncing
+  //delay(100); // small debouncing
 }
 
 void startCountdown(const unsigned long duration) {
@@ -166,6 +166,9 @@ bool checkForSwing() {
   delta_ax = (old_ax - ax);
   old_ax = ax;
 
+  /* sprintf(sensor_buffer, "%d, %d, %d, %d, %d, %d", ax, ay, az, gx, gy, gz);
+  Serial.println(sensor_buffer); */
+
   if (delta_ax > AX_THRESHOLD) { // swing detected
     //Serial.print("Swing detected!!!!!!!!!!!!");
     return true;
@@ -173,3 +176,14 @@ bool checkForSwing() {
   //Serial.print("No swing");
   return false;
 }
+
+
+// gy for left/right panning
+// gz for up/down panning
+
+// Detect movement: if change in gy > threshold, then move mouse left/right
+// Detect movement: if change in gz > threshold, then move mouse up/down
+
+// Or we try to find velocity of the mouse and move it accordingly
+
+// Or even position?
