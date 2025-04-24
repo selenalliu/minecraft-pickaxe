@@ -13,11 +13,12 @@ BleMouse mouse;
 /* GPIO 21 (SDA), 22 (SCL) for MPU6050 */
 
 // Timing constants
-const int SWING_HOLD_MS = 125; // Button debounce
+//const int SWING_HOLD_MS = 125; // What is this for?
 const unsigned long HOLD_COUNTDOWN_TIMER = 350; // If no swing after 500ms, release
+const int CLICK_COOLDOWN = 150; // 250ms cooldown between clicks
 
 // Sensor constants
-const int AX_THRESHOLD = 3000; // min acceleration value to trigger the button
+const int AX_THRESHOLD = 20000; // min acceleration value to trigger the button
 
 /* ======================= Global variables ======================= */
 int16_t ax, ay, az, gx, gy, gz; // collect the accelerometer/gyroscope data
@@ -26,6 +27,7 @@ int delta_ax; // change in acceleration
 
 unsigned int countdownStart = 0;
 bool countdownRunning = false;
+unsigned long lastClickTime = 0; // last time a click was made
 
 int swing_prev = 0;   // 0 = no swing, 1 = left swing, 2 = right swing
 bool swing_now = false;
@@ -81,7 +83,6 @@ void loop() {
       // Each swing refreshes countdown. When countdown expires, release
       while (!checkCountdown(HOLD_COUNTDOWN_TIMER)) {
         if (checkForSwing()) {
-          Serial.println("Left hold");
           refreshCountdown(HOLD_COUNTDOWN_TIMER);
         }
         delay(25);
@@ -99,7 +100,6 @@ void loop() {
       // Each swing refreshes countdown. When countdown expires, release
       while (!checkCountdown(HOLD_COUNTDOWN_TIMER)) {
         if (checkForSwing()) {
-          Serial.println("Right hold");
           refreshCountdown(HOLD_COUNTDOWN_TIMER);
         }
         delay(25);
@@ -111,20 +111,32 @@ void loop() {
     }
     // 3) Left --> left click
     else if (L) {
-      Serial.println("Left click");
-      mouse.click(MOUSE_LEFT);
+      unsigned long now = millis();
+      if (now - lastClickTime >= CLICK_COOLDOWN) {
+        //Serial.println("Left click!!!!!!!!!!!!!!");
+        mouse.click(MOUSE_LEFT);
+        lastClickTime = now;
+      } else {
+        Serial.println("Left click suppressed (cooldown)");
+      }
     }
     // 4) Right --> right click
     else if (R) {
-      Serial.println("Right click");
-      mouse.click(MOUSE_RIGHT);
+      unsigned long now = millis();
+      if (now - lastClickTime >= CLICK_COOLDOWN) {
+        //Serial.println("Right click!!!!!!!!!!!!!!!");
+        mouse.click(MOUSE_RIGHT);
+        lastClickTime = now;
+      } else {
+        Serial.println("Right click suppressed (cooldown)");
+      }
     }
     // 5) Back --> no click, no pan
     else if (B) {
       Serial.println("No pan");
     }
   }
-  delay(SWING_HOLD_MS); // small debouncing
+  delay(100); // small debouncing
 }
 
 void startCountdown(const unsigned long duration) {
@@ -155,9 +167,9 @@ bool checkForSwing() {
   old_ax = ax;
 
   if (delta_ax > AX_THRESHOLD) { // swing detected
-    Serial.print("Swing detected!!!!!!!!!!!!");
+    //Serial.print("Swing detected!!!!!!!!!!!!");
     return true;
   }
-  Serial.print("No swing");
+  //Serial.print("No swing");
   return false;
 }
