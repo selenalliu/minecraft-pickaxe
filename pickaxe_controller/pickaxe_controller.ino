@@ -80,11 +80,16 @@ void loop() {
   old_gy = gy;
   delta_gz = (old_gz - gz);
   old_gz = gz;
-  if (abs(delta_gx) < 10) delta_gx = 0;
-  if (abs(delta_gy) < 10) delta_gy = 0;
-  if (abs(delta_gz) < 10) delta_gz = 0;
-  Serial.print("Move mouse: "); Serial.print(delta_gy / SPEED); Serial.print(", "); Serial.println(delta_gz / SPEED);
-  mouse.move(gy / SPEED, gz / SPEED);
+  if (abs(gx) < 30) gx = 0;
+  if (abs(gy) < 30) gy = 0;
+  gz += 130;  // Account for gravity
+  if (abs(gz) < 30) gz = 0;
+  Serial.print("Move mouse: "); Serial.print(gy); Serial.print(", "); Serial.println(gz);
+  if (digitalRead(BUTTON_L) && digitalRead(BUTTON_R) && digitalRead(BUTTON_B)) {
+    // Only move mouse if no buttons are pressed
+    mouse.move(gy*1.3 / SPEED, gz*0.9 / SPEED); // L/R more sensitive, U/D less sensitive
+  }
+  
 
   unsigned long startTime;
 
