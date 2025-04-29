@@ -41,6 +41,8 @@ void loop() {
     return;
   }
 
+  
+
   unsigned long startTime;
 
   /*
@@ -117,7 +119,7 @@ void loop() {
   // If previous swing was high and current swing is also high, do nothing
   
   //swing_prev = swing_now;
-  delay(SWING_HOLD_MS); // small debouncing
+  //delay(SWING_HOLD_MS); // small debouncing
 }
 
 

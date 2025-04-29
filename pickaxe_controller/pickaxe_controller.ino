@@ -19,11 +19,15 @@ const int CLICK_COOLDOWN = 150; // 250ms cooldown between clicks
 
 // Sensor constants
 const int AX_THRESHOLD = 20000; // min acceleration value to trigger the button
+const int SPEED = 200;
 
 /* ======================= Global variables ======================= */
 int16_t ax, ay, az, gx, gy, gz; // collect the accelerometer/gyroscope data
 int old_ax = 0; // accelerometer data from the previous loop
 int delta_ax; // change in acceleration
+
+int old_gx, old_gy = 0, old_gz = 0;
+int delta_gx, delta_gy, delta_gz;
 
 unsigned int countdownStart = 0;
 bool countdownRunning = false;
@@ -55,6 +59,8 @@ void setup() {
     Serial.println("MPU6050 connection failed");
     while (1);
   }
+
+  // Initialize bluetooth mouse
   mouse.begin();
   Serial.println("Mouse started");
 }
@@ -66,14 +72,31 @@ void loop() {
     return;
   }
 
+  // Check for movement
+  mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz); // Read the current accelerometer data
+  delta_gx = (old_gx - gx);
+  old_gx = gx;
+  delta_gy = (old_gy - gy);
+  old_gy = gy;
+  delta_gz = (old_gz - gz);
+  old_gz = gz;
+  if (abs(delta_gx) < 10) delta_gx = 0;
+  if (abs(delta_gy) < 10) delta_gy = 0;
+  if (abs(delta_gz) < 10) delta_gz = 0;
+  Serial.print("Move mouse: "); Serial.print(delta_gy / SPEED); Serial.print(", "); Serial.println(delta_gz / SPEED);
+  mouse.move(gy / SPEED, gz / SPEED);
+
   unsigned long startTime;
 
   swing_now = checkForSwing();
+
 
   if (swing_now && !swing_prev) {
     int L = !digitalRead(BUTTON_L);
     int R = !digitalRead(BUTTON_R);
     int B = !digitalRead(BUTTON_B);
+
+    // If swing is detected but no buttons are pressed, break?
 
     // 1) Left + Back --> Left hold for 1 swing
     if (L && B) {
@@ -136,7 +159,7 @@ void loop() {
       Serial.println("No pan");
     }
   }
-  //delay(100); // small debouncing
+  delay(20); // small debouncing
 }
 
 void startCountdown(const unsigned long duration) {
