@@ -19,11 +19,15 @@ const int CLICK_COOLDOWN = 150; // 250ms cooldown between clicks
 
 // Sensor constants
 const int AX_THRESHOLD = 20000; // min acceleration value to trigger the button
+const int SPEED = 200;
 
 /* ======================= Global variables ======================= */
 int16_t ax, ay, az, gx, gy, gz; // collect the accelerometer/gyroscope data
 int old_ax = 0; // accelerometer data from the previous loop
 int delta_ax; // change in acceleration
+
+int old_gx, old_gy = 0, old_gz = 0;
+int delta_gx, delta_gy, delta_gz;
 
 unsigned int countdownStart = 0;
 bool countdownRunning = false;
@@ -55,6 +59,8 @@ void setup() {
     Serial.println("MPU6050 connection failed");
     while (1);
   }
+
+  // Initialize bluetooth mouse
   mouse.begin();
   Serial.println("Mouse started");
 }
@@ -66,14 +72,36 @@ void loop() {
     return;
   }
 
+  // Check for movement
+  mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz); // Read the current accelerometer data
+  delta_gx = (old_gx - gx);
+  old_gx = gx;
+  delta_gy = (old_gy - gy);
+  old_gy = gy;
+  delta_gz = (old_gz - gz);
+  old_gz = gz;
+  if (abs(gx) < 30) gx = 0;
+  if (abs(gy) < 30) gy = 0;
+  gz += 130;  // Account for gravity
+  if (abs(gz) < 30) gz = 0;
+  Serial.print("Move mouse: "); Serial.print(gy); Serial.print(", "); Serial.println(gz);
+  if (digitalRead(BUTTON_L) && digitalRead(BUTTON_R) && digitalRead(BUTTON_B)) {
+    // Only move mouse if no buttons are pressed
+    mouse.move(gy*1.3 / SPEED, gz*0.9 / SPEED); // L/R more sensitive, U/D less sensitive
+  }
+  
+
   unsigned long startTime;
 
   swing_now = checkForSwing();
+
 
   if (swing_now && !swing_prev) {
     int L = !digitalRead(BUTTON_L);
     int R = !digitalRead(BUTTON_R);
     int B = !digitalRead(BUTTON_B);
+
+    // If swing is detected but no buttons are pressed, break?
 
     // 1) Left + Back --> Left hold for 1 swing
     if (L && B) {
@@ -136,7 +164,7 @@ void loop() {
       Serial.println("No pan");
     }
   }
-  delay(100); // small debouncing
+  delay(20); // small debouncing
 }
 
 void startCountdown(const unsigned long duration) {
@@ -166,6 +194,9 @@ bool checkForSwing() {
   delta_ax = (old_ax - ax);
   old_ax = ax;
 
+  /* sprintf(sensor_buffer, "%d, %d, %d, %d, %d, %d", ax, ay, az, gx, gy, gz);
+  Serial.println(sensor_buffer); */
+
   if (delta_ax > AX_THRESHOLD) { // swing detected
     //Serial.print("Swing detected!!!!!!!!!!!!");
     return true;
@@ -173,3 +204,14 @@ bool checkForSwing() {
   //Serial.print("No swing");
   return false;
 }
+
+
+// gy for left/right panning
+// gz for up/down panning
+
+// Detect movement: if change in gy > threshold, then move mouse left/right
+// Detect movement: if change in gz > threshold, then move mouse up/down
+
+// Or we try to find velocity of the mouse and move it accordingly
+
+// Or even position?
