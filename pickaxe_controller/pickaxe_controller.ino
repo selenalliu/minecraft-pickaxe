@@ -12,8 +12,10 @@ BleMouse mouse;
 #define BUTTON_R  19  // right button
 /* GPIO 21 (SDA), 22 (SCL) for MPU6050 */
 
+/* ======================= Global variables ======================= */
 // Timing constants
-//const int SWING_HOLD_MS = 125; // What is this for?
+const int SWING_HOLD_MS = 25; // Small delay in between hold check cycles
+const int LOOP_DELAY_MS = 20; // Small delay in between mouse movements/clicks (debouncing)
 const unsigned long HOLD_COUNTDOWN_TIMER = 350; // If no swing after 500ms, release
 const int CLICK_COOLDOWN = 150; // 250ms cooldown between clicks
 
@@ -21,13 +23,12 @@ const int CLICK_COOLDOWN = 150; // 250ms cooldown between clicks
 const int AX_THRESHOLD = 20000; // min acceleration value to trigger the button
 const int SPEED = 200;
 
-/* ======================= Global variables ======================= */
 int16_t ax, ay, az, gx, gy, gz; // collect the accelerometer/gyroscope data
 int old_ax = 0; // accelerometer data from the previous loop
 int delta_ax; // change in acceleration
 
-int old_gx, old_gy = 0, old_gz = 0;
-int delta_gx, delta_gy, delta_gz;
+// int old_gx, old_gy = 0, old_gz = 0;
+// int delta_gx, delta_gy, delta_gz;
 
 unsigned int countdownStart = 0;
 bool countdownRunning = false;
@@ -36,7 +37,7 @@ unsigned long lastClickTime = 0; // last time a click was made
 int swing_prev = 0;   // 0 = no swing, 1 = left swing, 2 = right swing
 bool swing_now = false;
 
-/* ======================= Function Declarations/Definitions ======================= */
+/* ======================= Function Declarations ======================= */
 // Inactivity countdown for release
 void startCountdown();
 int checkCountdown();
@@ -72,30 +73,33 @@ void loop() {
     return;
   }
 
-  // Check for movement
+  /* =========== Handling Mouse Movement =========== */
   mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz); // Read the current accelerometer data
-  delta_gx = (old_gx - gx);
-  old_gx = gx;
-  delta_gy = (old_gy - gy);
-  old_gy = gy;
-  delta_gz = (old_gz - gz);
-  old_gz = gz;
-  if (abs(gx) < 30) gx = 0;
+  // delta_gx = (old_gx - gx);
+  // old_gx = gx;
+  // delta_gy = (old_gy - gy);
+  // old_gy = gy;
+  // delta_gz = (old_gz - gz);
+  // old_gz = gz;
+
+  // if (abs(gx) < 30) gx = 0;
   if (abs(gy) < 30) gy = 0;
   gz += 130;  // Account for gravity
   if (abs(gz) < 30) gz = 0;
+
   Serial.print("Move mouse: "); Serial.print(gy); Serial.print(", "); Serial.println(gz);
+
   if (digitalRead(BUTTON_L) && digitalRead(BUTTON_R) && digitalRead(BUTTON_B)) {
     // Only move mouse if no buttons are pressed
     mouse.move(gy*1.3 / SPEED, gz*0.9 / SPEED); // L/R more sensitive, U/D less sensitive
   }
   
+  /* =========== Swing/Button Input Logic =========== */
 
   unsigned long startTime;
 
   swing_now = checkForSwing();
-
-
+  
   if (swing_now && !swing_prev) {
     int L = !digitalRead(BUTTON_L);
     int R = !digitalRead(BUTTON_R);
@@ -113,7 +117,7 @@ void loop() {
         if (checkForSwing()) {
           refreshCountdown(HOLD_COUNTDOWN_TIMER);
         }
-        delay(25);
+        delay(SWING_HOLD_MS);
       }
       Serial.println("Left release");
       mouse.release(MOUSE_LEFT);
@@ -130,7 +134,7 @@ void loop() {
         if (checkForSwing()) {
           refreshCountdown(HOLD_COUNTDOWN_TIMER);
         }
-        delay(25);
+        delay(SWING_HOLD_MS);
       }
       Serial.println("Right release");
       mouse.release(MOUSE_RIGHT);
@@ -164,8 +168,11 @@ void loop() {
       Serial.println("No pan");
     }
   }
-  delay(20); // small debouncing
+
+  delay(LOOP_DELAY_MS); // Small debouncing delay
 }
+
+/* ======================= Function Definitions ======================= */
 
 void startCountdown(const unsigned long duration) {
   countdownStart = millis();
