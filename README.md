@@ -24,8 +24,8 @@ Relative Mouse Panning
 
 ## Setup & Usage
 ### Clone the repo 
-`git clone https://github.com/yourusername/minecraft-pickaxe-controller.git
-cd minecraft-pickaxe-controller`
+`git clone https://github.com/selenalliu/minecraft-pickaxe
+cd minecraft-pickaxe/pickaxe-controller`
 ### Install Arduino Libraries:
 1) MPU6050 (https://github.com/ElectronicCats/mpu6050)
 2) I2Cdev (https://github.com/jrowberg/i2cdevlib/tree/master)
