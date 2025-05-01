@@ -19,6 +19,6 @@ is applied in-game with controls like left/right clicks/holds, which allow playe
 4) Wire
 
 ### Circuit:
-![Circuit diagram for Minecraft Pickaxe](https://github.com/selenalliu/minecraft-pickaxe/blob/main/pickaxe_circuit.png?raw=true)
+![Circuit diagram for Minecraft Pickaxe](https://github.com/selenalliu/minecraft-pickaxe/blob/main/minecraft_pickaxe_circuit.png?raw=true)
 
 ## Demo
