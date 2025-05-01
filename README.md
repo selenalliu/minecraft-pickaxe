@@ -2,6 +2,8 @@
 This game controller mimics the iconic in-game tool that doubles as a mouse and brings physical interactivity to Minecraft, 
 allowing players to mine, craft, and control in-game movement by swinging a real, pickaxe-shaped device! ⛏️
 
+## Demo
+
 ## Features
 Swing to click/hold
 - Single swing + left button = left click
@@ -13,14 +15,14 @@ Relative Mouse Panning
 - Tilt/pan with gyroscope
 - Panning disabled during swings or middle button press
 
-### Circuit:
-![Circuit diagram for Minecraft Pickaxe](https://github.com/selenalliu/minecraft-pickaxe/blob/main/minecraft_pickaxe_circuit.png?raw=true)
-
 ## Hardware
 - ESP32 Devkit V1
 - MPU6050 IMU Sensor
 - 3 push buttons
 - Powered with 5-20 V (<12V suggested) battery/micro-USB
+
+### Circuit:
+![Circuit diagram for Minecraft Pickaxe](https://github.com/selenalliu/minecraft-pickaxe/blob/main/minecraft_pickaxe_circuit.png?raw=true)
 
 ## Setup & Usage
 ### Clone the repo 
@@ -39,10 +41,10 @@ Relative Mouse Panning
 - Controller appears as "ESP32 Bluetooth Mouse"
 
 ## Customization
-- Movement Sesitivity: Adjust `SPEED` multiplier
+- Movement Sensitivity: Adjust `SPEED` multiplier
 - Swing Sensitivity: Adjust `AX_THRESHOLD`
 
 ## Future Improvements
 - Use a higher-grade accelerometer for true position tracking
 - Add a capacitive touch strip for scroll/zoom
-- Integrate left-hand controller for dual weilding
+- Integrate left-hand controller for dual wielding
