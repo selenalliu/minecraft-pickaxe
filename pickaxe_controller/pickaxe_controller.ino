@@ -74,17 +74,17 @@ void loop() {
 
   // Check for movement
   mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz); // Read the current accelerometer data
-  delta_gx = (old_gx - gx);
-  old_gx = gx;
-  delta_gy = (old_gy - gy);
+  //delta_gx = (old_gx - gx);
+  //old_gx = gx;
+  //delta_gy = (old_gy - gy);
   old_gy = gy;
-  delta_gz = (old_gz - gz);
+  //delta_gz = (old_gz - gz);
   old_gz = gz;
-  if (abs(gx) < 30) gx = 0;
+  //if (abs(gx) < 30) gx = 0;
   if (abs(gy) < 30) gy = 0;
   gz += 130;  // Account for gravity
   if (abs(gz) < 30) gz = 0;
-  Serial.print("Move mouse: "); Serial.print(gy); Serial.print(", "); Serial.println(gz);
+  //Serial.print("Move mouse: "); Serial.print(gy); Serial.print(", "); Serial.println(gz);
   if (digitalRead(BUTTON_L) && digitalRead(BUTTON_R) && digitalRead(BUTTON_B)) {
     // Only move mouse if no buttons are pressed
     mouse.move(gy*1.3 / SPEED, gz*0.9 / SPEED); // L/R more sensitive, U/D less sensitive
@@ -189,12 +189,16 @@ void refreshCountdown(const unsigned long duration) {
   countdownStart = millis();
 }
 
+char sensor_buffer[80];
 bool checkForSwing() {
   mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz); // read current accelerometer data
   delta_ax = (old_ax - ax);
   old_ax = ax;
 
+  
   /* sprintf(sensor_buffer, "%d, %d, %d, %d, %d, %d", ax, ay, az, gx, gy, gz);
+  Serial.println(sensor_buffer); */
+  /* sprintf(sensor_buffer, "%d, %d", ax, delta_ax);
   Serial.println(sensor_buffer); */
 
   if (delta_ax > AX_THRESHOLD) { // swing detected
