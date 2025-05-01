@@ -1,24 +1,48 @@
 # Minecraft Pickaxe Controller
-This game controller mimics the iconic in-game tool and brings physical interactivity to Minecraft, 
+This game controller mimics the iconic in-game tool that doubles as a mouse and brings physical interactivity to Minecraft, 
 allowing players to mine, craft, and control in-game movement by swinging a real, pickaxe-shaped device! ⛏️
 
-## Table of Contents
-* [General Info](#general-info)
-* [Setup](#setup)
-* [Demo](#demo)
-  
-## General Info
-Using an ESP32 Devkit V1 and MPU6050, the controller is able to emulate the functionality of a Bluetooth mouse -- this functionality
-is applied in-game with controls like left/right clicks/holds, which allow players to break blocks, interact with items, and more.
+## Features
+Swing to click/hold
+- Single swing + left button = left click
+- Swings + left button + middle button = left hold
+- Same logic for right button
+- Sensitivity calibration
 
-## Setup
-### Libraries:
-1) MPU6050 (https://github.com/ElectronicCats/mpu6050)
-2) I2Cdev (https://github.com/jrowberg/i2cdevlib/tree/master)
-3) ESP32-BLE-Mouse (https://github.com/sirfragles/ESP32-BLE-Mouse)
-4) Wire
+Relative Mouse Panning
+- Tilt/pan with gyroscope
+- Panning disabled during swings or middle button press
 
 ### Circuit:
 ![Circuit diagram for Minecraft Pickaxe](https://github.com/selenalliu/minecraft-pickaxe/blob/main/minecraft_pickaxe_circuit.png?raw=true)
 
-## Demo
+## Hardware
+- ESP32 Devkit V1
+- MPU6050 IMU Sensor
+- 3 push buttons
+- Powered with 5-20 V (<12V suggested) battery/micro-USB
+
+## Setup & Usage
+### Clone the repo 
+`git clone https://github.com/yourusername/minecraft-pickaxe-controller.git
+cd minecraft-pickaxe-controller`
+### Install Arduino Libraries:
+1) MPU6050 (https://github.com/ElectronicCats/mpu6050)
+2) I2Cdev (https://github.com/jrowberg/i2cdevlib/tree/master)
+3) ESP32-BLE-Mouse (https://github.com/sirfragles/ESP32-BLE-Mouse)
+4) Wire
+### Open & Upload
+- Open `pickaxe_controller/pickaxe_controller.ino` in Arduino IDE
+- Select ESP32 Dev Module and the correct COM port
+- Upload to board
+### Bluetooth Pairing
+- Controller appears as "ESP32 Bluetooth Mouse"
+
+## Customization
+- Movement Sesitivity: Adjust `SPEED` multiplier
+- Swing Sensitivity: Adjust `AX_THRESHOLD`
+
+## Future Improvements
+- Use a higher-grade accelerometer for true position tracking
+- Add a capacitive touch strip for scroll/zoom
+- Integrate left-hand controller for dual weilding
