@@ -22,7 +22,7 @@ Relative Mouse Panning
 - Powered with 5-20 V (<12V suggested) battery/micro-USB
 
 ### Circuit:
-![Circuit diagram for Minecraft Pickaxe](https://github.com/selenalliu/minecraft-pickaxe/blob/main/minecraft_pickaxe_circuit.png?raw=true)
+![Circuit diagram for Minecraft Pickaxe](https://github.com/selenalliu/minecraft-pickaxe/blob/main/pickaxe_circuit.png?raw=true)
 
 ## Setup & Usage
 ### Clone the repo 
