@@ -23,6 +23,7 @@ Relative Mouse Panning
 
 ### Circuit:
 ![Circuit diagram for Minecraft Pickaxe](https://github.com/selenalliu/minecraft-pickaxe/blob/main/pickaxe_circuit.png?raw=true)
+Made with https://www.cirkitstudio.com/
 
 ## Setup & Usage
 ### Clone the repo 
