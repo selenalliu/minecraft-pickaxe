@@ -39,7 +39,7 @@ Made with https://www.cirkitstudio.com/
 - Select ESP32 Dev Module and the correct COM port
 - Upload to board
 ### Bluetooth Pairing
-- Controller appears as "ESP32 Bluetooth Mouse"
+- Controller appears as "Minecraft Pickaxe Controller"
 
 ## Customization
 - Movement Sensitivity: Adjust `SPEED` multiplier
