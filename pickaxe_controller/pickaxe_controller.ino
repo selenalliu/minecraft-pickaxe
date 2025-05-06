@@ -4,7 +4,7 @@
 #include <BleMouse.h>
 
 MPU6050 mpu;
-BleMouse mouse;
+BleMouse mouse("Minecraft Pickaxe Controller");
 
 // GPIO Pin Defs
 #define BUTTON_L  5  // left button
@@ -26,9 +26,6 @@ const int SPEED = 200;
 int16_t ax, ay, az, gx, gy, gz; // collect the accelerometer/gyroscope data
 int old_ax = 0; // accelerometer data from the previous loop
 int delta_ax; // change in acceleration
-
-// int old_gx, old_gy = 0, old_gz = 0;
-// int delta_gx, delta_gy, delta_gz;
 
 unsigned int countdownStart = 0;
 bool countdownRunning = false;
@@ -75,13 +72,7 @@ void loop() {
 
   /* =========== Handling Mouse Movement =========== */
   mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz); // Read the current accelerometer data
-  //delta_gx = (old_gx - gx);
-  //old_gx = gx;
-  //delta_gy = (old_gy - gy);
-  old_gy = gy;
-  //delta_gz = (old_gz - gz);
-  old_gz = gz;
-  //if (abs(gx) < 30) gx = 0;
+
   if (abs(gy) < 30) gy = 0;
   gz += 130;  // Account for gravity
   if (abs(gz) < 30) gz = 0;
@@ -101,8 +92,6 @@ void loop() {
     int L = !digitalRead(BUTTON_L);
     int R = !digitalRead(BUTTON_R);
     int B = !digitalRead(BUTTON_B);
-
-    // If swing is detected but no buttons are pressed, break?
 
     // 1) Left + Back --> Left hold for 1 swing
     if (L && B) {
@@ -199,7 +188,6 @@ bool checkForSwing() {
   delta_ax = (old_ax - ax);
   old_ax = ax;
 
-  
   /* sprintf(sensor_buffer, "%d, %d, %d, %d, %d, %d", ax, ay, az, gx, gy, gz);
   Serial.println(sensor_buffer); */
   /* sprintf(sensor_buffer, "%d, %d", ax, delta_ax);
@@ -212,14 +200,3 @@ bool checkForSwing() {
   //Serial.print("No swing");
   return false;
 }
-
-
-// gy for left/right panning
-// gz for up/down panning
-
-// Detect movement: if change in gy > threshold, then move mouse left/right
-// Detect movement: if change in gz > threshold, then move mouse up/down
-
-// Or we try to find velocity of the mouse and move it accordingly
-
-// Or even position?
