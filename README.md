@@ -3,6 +3,7 @@ This game controller mimics the iconic in-game tool that doubles as a mouse and 
 allowing players to mine, craft, and control in-game movement by swinging a real, pickaxe-shaped device! ⛏️
 
 ## Demo
+[![Demonstration Video](https://img.youtube.com/vi/FetWuI65L0M/0.jpg)](https://www.youtube.com/watch?v=FetWuI65L0M)
 
 ## Features
 Swing to click/hold
